@@ -3,7 +3,7 @@ import argparse
 from scanner import Scanner
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-u', '--url', dest='url', action='store', required=True)   
+parser.add_argument('-d', '--domain', dest='domain', required=True)
 
 def main(args):
     scan = Scanner(args)
