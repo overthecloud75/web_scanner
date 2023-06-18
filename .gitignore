@@ -3,3 +3,5 @@ Lib
 Scripts
 __pycache__
 pyvenv.cfg
+logs
+chromedriver.exe

@@ -1,7 +1,5 @@
 import requests
 
-from .utils import check_server_info
-
 class CheckConfig():
 
     def __init__(self, url):

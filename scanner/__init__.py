@@ -3,14 +3,17 @@ import urllib3
 from .configuration import CheckConfig
 from .crawl import Crawl
 from .port_scan import PortScan
+from utils import setup_logger
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class Scanner():
 
     def __init__(self, args):
-        self.domain = args.domain
+        self.logger = setup_logger()
+        self.logger.info('{} start'.format(__name__))
 
+        self.domain = args.domain
         self.scan()
 
     def scan(self):
@@ -19,8 +22,7 @@ class Scanner():
             crawl urls 
             check configuration 
         '''
-
-        port_scan = PortScan(domain=self.domain)
+        port_scan = PortScan(domain=self.domain, logger=self.logger)
 
         start_url = ''
 
@@ -29,10 +31,10 @@ class Scanner():
         elif 80 in port_scan.live_ports:
             start_url =  'http://' + self.domain
 
-        print('start_url', start_url)
+        self.logger.info('start_url: {}'.format(start_url))
         
         if start_url:
-            crawl = Crawl(start_url)
+            crawl = Crawl(start_url, logger=self.logger)
             results = crawl.results
             for url in crawl.results:
                 if url == start_url:

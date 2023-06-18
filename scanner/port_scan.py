@@ -2,7 +2,10 @@ import nmap
 
 class PortScan():
 
-    def __init__(self, domain):
+    def __init__(self, domain, logger):
+        self.logger = logger
+        self.logger.info('{} start'.format(__name__))
+
         self.host = domain 
         self.ports = '80, 443'
 
@@ -13,10 +16,10 @@ class PortScan():
     def collect_ports(self):
 
         scanner = nmap.PortScanner()
-        scanner.scan(self.host, self.ports)
+        scanner.scan(self.host, self.ports, arguments='-Pn')
         
         for target_host in scanner.all_hosts():
-            print('Scanning host: %s' % target_host)
+            self.logger.info('Scanning host: {}'.format(target_host))
             ports = list(scanner[target_host]['tcp'].keys())
 
             if not self.live_ports:

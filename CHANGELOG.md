@@ -1,4 +1,5 @@
 * 23/06/18
+    - 0.0.3 : logging, get_urls by selenium <br>
     - 0.0.2 : portscan, get_urls by crawl <br>
 
 * 23/06/17
