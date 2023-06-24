@@ -1,13 +1,15 @@
-import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+import time
+
+from configs import LOG_FILE, MITMPROXY 
+from .mitm_log import MitmLogCheck
 
 class Crawl():
 
     def __init__(self, start_url, logger):
-
         self.logger = logger
         self.logger.info('{} start'.format(__name__))
 
@@ -15,14 +17,20 @@ class Crawl():
         self.urls = [start_url]      # 수집한 URL을 저장할 리스트
         self.results = {}            # response 결과 저장 
 
+        # Mitm 실행
+        MitmLogCheck(self.start_url, logger, self.results)
+
         # selenuim 설정 
         options = Options()
         options.add_argument('--headless')
-        # options.add_argument('--ignore-certificate-errors')
+        options.add_argument('--log-path={}'.format(LOG_FILE))
+        options.add_argument('--proxy-server={}:{}'.format(MITMPROXY['host'], MITMPROXY['port']))
+        options.add_argument('--ignore-certificate-errors')
         self.driver = webdriver.Chrome(options=options)
         self.driver.implicitly_wait(10)
         
         self.collect_urls()
+        time.sleep(3)
 
     def collect_urls(self):
         '''
@@ -46,17 +54,12 @@ class Crawl():
                     soup = BeautifulSoup(page_source, 'html.parser')
                     
                     self.get_a_link(url, soup)
-                    self.get_src(url, soup)
+                    # self.get_src(url, soup)
 
-                    # 해당 URL의 HTML 내용을 가져옴
-                    response = requests.get(url, verify=False)
-                    self.results[url] = {'method': 'GET', 'status_code': response.status_code, 'headers': response.headers}
-
-                    # URL을 방문한 것으로 표시
                     visited.add(url)
 
                 except Exception as e:
-                    print('An error occurred: {}'.format(e))
+                    self.logger.error('An error occurred: {}'.format(e))
 
         return visited
 
@@ -80,7 +83,7 @@ class Crawl():
         if href and (href.startswith('/') or href.startswith('http') or href.startswith('../')):
             if '?' in href:
                 href = href.split('?')[0]
-            print('href', href)
+            self.logger.info('href: {}'.format(href))
             # 상대 URL을 절대 URL로 변환
             absolute_url = urljoin(url, href)
             # 도메인이 일치하는 경우에만 URL을 추가

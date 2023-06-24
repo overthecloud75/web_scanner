@@ -2,7 +2,9 @@ import requests
 
 class CheckConfig():
 
-    def __init__(self, url):
+    def __init__(self, url, logger):
+        self.logger = logger
+
         self.url = url
         self.results = {}
 
@@ -23,7 +25,7 @@ class CheckConfig():
             else:
                 self.results['trace'] = {'result': 'fail', 'proof': 'status_code is {}'.format(response.status_code)}
         except Exception as e:
-            print('An error occurred: {}'.format(e))
+            self.logger.error('An error occurred: {}'.format(e))
 
 
 

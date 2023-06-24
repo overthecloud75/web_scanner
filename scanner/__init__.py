@@ -38,11 +38,11 @@ class Scanner():
             results = crawl.results
             for url in crawl.results:
                 if url == start_url:
-                    check_config = CheckConfig(url)
+                    check_config = CheckConfig(url, logger=self.logger)
                     for config_key in check_config.results:
                         results[url][config_key] = check_config.results[config_key]
 
-                print(url, results[url])
+                self.logger.info('{} : {}'.format(url, results[url]))
 
 
 
