@@ -1,3 +1,5 @@
+* 23/06/25
+    - 0.0.5 : check query exists - part 1 <br>
 
 * 23/06/24
     - 0.0.4 : use mitmproxy for request deduplication <br>

@@ -3,8 +3,10 @@ import asyncio
 import threading
 from mitmproxy import proxy, options
 from mitmproxy.tools.dump import DumpMaster
+from urllib.parse import urlparse, parse_qs
 
 from configs import MITMPROXY 
+from utils import filter_url
 
 class AddLog:
     def __init__(self, start_url, logger, results):
@@ -36,14 +38,8 @@ class AddLog:
             timestamp_end: 응답 종료 시간을 나타내는 mitmproxy.net.http.Timestamp 객체입니다.
         '''
         headers_dict = dict(flow.request.headers.items())
-        url = self.filter_url(flow.request.url)
-        self.results[url] = {'method': flow.request.method, 'status_code': flow.response.status_code, 'headers': headers_dict}
-    
-    def filter_url(self, url):
-        if '?' in url:
-            url = url.split('?')[0]
-        return url
-
+        path, query, fragment = filter_url(flow.request.url)
+        self.results[path] = {'method': flow.request.method, 'query': query, 'fragment': fragment, 'status_code': flow.response.status_code, 'headers': headers_dict}
 
 class MitmLogCheck():
 

@@ -5,3 +5,4 @@ __pycache__
 pyvenv.cfg
 logs
 chromedriver.exe
+TODO.md
